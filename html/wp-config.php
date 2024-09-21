@@ -65,13 +65,11 @@ define( 'DB_CHARSET', getenv_docker('WORDPRESS_DB_CHARSET', 'utf8') );
 define( 'DB_COLLATE', getenv_docker('WORDPRESS_DB_COLLATE', '') );
 
 /**#@+
- * Authentication unique keys and salts.
+ * Authentication Unique Keys and Salts.
  *
- * Change these to different unique phrases! You can generate these using
- * the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}.
- *
- * You can change these at any point in time to invalidate all existing cookies.
- * This will force all users to have to log in again.
+ * Change these to different unique phrases!
+ * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}
+ * You can change these at any point in time to invalidate all existing cookies. This will force all users to have to log in again.
  *
  * @since 2.6.0
  */
@@ -96,18 +94,37 @@ define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       '4a90880
 $table_prefix = getenv_docker('WORDPRESS_TABLE_PREFIX', 'wp_');
 
 /**
+ * WordPress Localized Language, defaults to English.
+ *
+ * Change this to localize WordPress. A corresponding MO file for the chosen
+ * language must be installed to wp-content/languages. For example, install
+ * de_DE.mo to wp-content/languages and set WPLANG to 'de_DE' to enable German
+ * language support.
+ */
+define('WPLANG', '');
+
+/**
  * For developers: WordPress debugging mode.
  *
- * Change this to true to enable the display of notices during development.
+ * Change these values to true to enable the display of notices during development.
  * It is strongly recommended that plugin and theme developers use WP_DEBUG
  * in their development environments.
- *
- * For information on other constants that can be used for debugging,
- * visit the documentation.
- *
- * @link https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
  */
-define( 'WP_DEBUG', !!getenv_docker('WORDPRESS_DEBUG', '') );
+define( 'WP_DEBUG', !!getenv_docker('WORDPRESS_DEBUG', !$onGae) );
+
+/**
+ * This setting logs errors to a file if WP_DEBUG is enabled.
+ * These files are NOT supported by App Engine; use WP_DEBUG_DISPLAY instead.
+ */
+define('WP_DEBUG_LOG', !$onGae);  // Not supported in App Engine
+
+/**
+ * This setting displays errors in the application if WP_DEBUG is enabled.
+ *
+ * WARNING: Enabling WP_DEBUG_DISPLAY in production is not secure.
+ * See https://owasp.org/www-project-proactive-controls/v3/en/c10-errors-exceptions
+ */
+define('WP_DEBUG_DISPLAY', !$onGae);
 
 /* Add any custom values between this line and the "stop editing" line. */
 
@@ -122,12 +139,16 @@ if ($configExtra = getenv_docker('WORDPRESS_CONFIG_EXTRA', '')) {
 	eval($configExtra);
 }
 
-/* That's all, stop editing! Happy publishing. */
-
+/* That's all, stop editing! Happy blogging. */
 /** Absolute path to the WordPress directory. */
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
+	if ($onGae) {
+    define('ABSPATH', dirname(__FILE__) . '/wordpress/');
+	} else {
+		define( 'ABSPATH', __DIR__ . '/' );
+	}
 }
 
 /** Sets up WordPress vars and included files. */
-require_once ABSPATH . 'wp-settings.php';
+require_once(ABSPATH . 'wp-settings.php');

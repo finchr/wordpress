@@ -8,38 +8,26 @@ services:
     ports:
       - 8080:80
     volumes:
+      - cloudsql:/cloudsql
       - ./html:/var/www/html:rw
       - ./:/work
-    links:
-      - db:mysql
     environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: really_strong_password
-
-  db:
-    image: mysql:8.0
-    platform: "linux/amd64"
-    restart: always
-    volumes:
-      ## - ./local/initdb.d:/docker-entrypoint-initdb.d:ro
-      - dbdata:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: wordpress
-      MYSQL_PASSWORD: really_strong_password
-      MYSQL_USER: wordpress
-      MYSQL_ROOT_PASSWORD: really_strong_password
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    depends_on:
+      - proxy
 
   proxy:
-    image: localhost/proxy:local
+    image: local/proxy:local
     build:
       context: proxy
       dockerfile: Dockerfile
     platform: "linux/amd64"
     env_file:
       - secrets/wordpress.env
-    command: cloud-sql-proxy --unix-socket /cloudsql/ portal-twbc-org:us-west1:joomla-db 
+    command: cloud-sql-proxy --unix-socket /cloudsql/ wordpress-test-434320:us-west1:wordpress
     volumes:
       - cloudsql:/cloudsql
       - root:/root:rw
@@ -47,15 +35,19 @@ services:
   admin:
     image: phpmyadmin
     restart: always
-    links:
-      - db:mysql
+    platform: "linux/amd64"
     ports:
       - 8085:80
     environment:
       PMA_ARBITRARY: 1
-      PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: really_strong_password
+      PMA_HOST: localhost
+      PMA_SOCKET: /cloudsql/wordpress-test-434320:us-west1:wordpress
+      PMA_USER: ${WORDPRESS_DB_USER}
+      PMA_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    volumes:
+      - cloudsql:/cloudsql
+    depends_on:
+      - proxy
 
 volumes:
   dbdata: {}

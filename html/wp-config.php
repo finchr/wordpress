@@ -65,22 +65,24 @@ define( 'DB_CHARSET', getenv_docker('WORDPRESS_DB_CHARSET', 'utf8') );
 define( 'DB_COLLATE', getenv_docker('WORDPRESS_DB_COLLATE', '') );
 
 /**#@+
- * Authentication Unique Keys and Salts.
+ * Authentication unique keys and salts.
  *
- * Change these to different unique phrases!
- * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}
- * You can change these at any point in time to invalidate all existing cookies. This will force all users to have to log in again.
+ * Change these to different unique phrases! You can generate these using
+ * the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}.
+ *
+ * You can change these at any point in time to invalidate all existing cookies.
+ * This will force all users to have to log in again.
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',         getenv_docker('WORDPRESS_AUTH_KEY',         'a64c4a83939ecafe634c6312c7851973737b11dd') );
-define( 'SECURE_AUTH_KEY',  getenv_docker('WORDPRESS_SECURE_AUTH_KEY',  '3c9a214a9233ea68731bfba357b62a56cbea0a43') );
-define( 'LOGGED_IN_KEY',    getenv_docker('WORDPRESS_LOGGED_IN_KEY',    '523334935060532a928b51a5dde769de13928bc5') );
-define( 'NONCE_KEY',        getenv_docker('WORDPRESS_NONCE_KEY',        'f2c3ef788cd65a1391282e347b14a8a04c431afd') );
-define( 'AUTH_SALT',        getenv_docker('WORDPRESS_AUTH_SALT',        '0e77fb9121a36e1ee6491f776a0a581af64ffea3') );
-define( 'SECURE_AUTH_SALT', getenv_docker('WORDPRESS_SECURE_AUTH_SALT', '99d13fe62bb2cbfd155a2b423935355d04729ca6') );
-define( 'LOGGED_IN_SALT',   getenv_docker('WORDPRESS_LOGGED_IN_SALT',   'fd9d835c3cb41fe86d2667f890746d3c64a19fb6') );
-define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       '4a90880f99e01632c9716128418fef1cd2e31fc4') );
+define( 'AUTH_KEY',         getenv_docker('WORDPRESS_AUTH_KEY',         'e49921acf935d639aa7443371e7ed9c9933b7f6c') );
+define( 'SECURE_AUTH_KEY',  getenv_docker('WORDPRESS_SECURE_AUTH_KEY',  '5803223cb82e8e34d3a88cc6a6b654b7856315ef') );
+define( 'LOGGED_IN_KEY',    getenv_docker('WORDPRESS_LOGGED_IN_KEY',    'bad0ae7b224fce9836301e2b4a87a4b07f334ff3') );
+define( 'NONCE_KEY',        getenv_docker('WORDPRESS_NONCE_KEY',        '8d55355f6c7a4915fc1cc011bd12b6849d907c3d') );
+define( 'AUTH_SALT',        getenv_docker('WORDPRESS_AUTH_SALT',        'd8d7cc1c94af2adc303dfcf6912113462e86b552') );
+define( 'SECURE_AUTH_SALT', getenv_docker('WORDPRESS_SECURE_AUTH_SALT', '3121922ab86e0c7676cd84f48eea25a32f18e8c4') );
+define( 'LOGGED_IN_SALT',   getenv_docker('WORDPRESS_LOGGED_IN_SALT',   '5134d6bcdeac71f8d0c6c71d52f0acaac8e127df') );
+define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       'fa32a543f12cc42df784e5e21f2a02dde0347cd2') );
 // (See also https://wordpress.stackexchange.com/a/152905/199287)
 
 /**#@-*/
@@ -94,37 +96,18 @@ define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       '4a90880
 $table_prefix = getenv_docker('WORDPRESS_TABLE_PREFIX', 'wp_');
 
 /**
- * WordPress Localized Language, defaults to English.
- *
- * Change this to localize WordPress. A corresponding MO file for the chosen
- * language must be installed to wp-content/languages. For example, install
- * de_DE.mo to wp-content/languages and set WPLANG to 'de_DE' to enable German
- * language support.
- */
-define('WPLANG', '');
-
-/**
  * For developers: WordPress debugging mode.
  *
- * Change these values to true to enable the display of notices during development.
+ * Change this to true to enable the display of notices during development.
  * It is strongly recommended that plugin and theme developers use WP_DEBUG
  * in their development environments.
- */
-define( 'WP_DEBUG', !!getenv_docker('WORDPRESS_DEBUG', !$onGae) );
-
-/**
- * This setting logs errors to a file if WP_DEBUG is enabled.
- * These files are NOT supported by App Engine; use WP_DEBUG_DISPLAY instead.
- */
-define('WP_DEBUG_LOG', !$onGae);  // Not supported in App Engine
-
-/**
- * This setting displays errors in the application if WP_DEBUG is enabled.
  *
- * WARNING: Enabling WP_DEBUG_DISPLAY in production is not secure.
- * See https://owasp.org/www-project-proactive-controls/v3/en/c10-errors-exceptions
+ * For information on other constants that can be used for debugging,
+ * visit the documentation.
+ *
+ * @link https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
  */
-define('WP_DEBUG_DISPLAY', !$onGae);
+define( 'WP_DEBUG', !!getenv_docker('WORDPRESS_DEBUG', '') );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
@@ -139,16 +122,12 @@ if ($configExtra = getenv_docker('WORDPRESS_CONFIG_EXTRA', '')) {
 	eval($configExtra);
 }
 
-/* That's all, stop editing! Happy blogging. */
+/* That's all, stop editing! Happy publishing. */
+
 /** Absolute path to the WordPress directory. */
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
-	if ($onGae) {
-    define('ABSPATH', dirname(__FILE__) . '/wordpress/');
-	} else {
-		define( 'ABSPATH', __DIR__ . '/' );
-	}
 }
 
 /** Sets up WordPress vars and included files. */
-require_once(ABSPATH . 'wp-settings.php');
+require_once ABSPATH . 'wp-settings.php';

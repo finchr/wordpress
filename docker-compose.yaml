@@ -2,20 +2,31 @@ version: '3.1'
 
 services:
   wordpress:
-    image: wordpress
+    image: local/wordpress:local
+    build:
+      context: .
+      dockerfile: Dockerfile
     platform: "linux/amd64"
     restart: always
     ports:
-      - 8080:80
+      - 8080:8080
+        ## - 8443:443
     volumes:
       - cloudsql:/cloudsql
       - ./html:/var/www/html:rw
       - ./:/work
+        ## - ./local/apache2/sites-enabled/default-ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf
+        ## - ./local/apache2/mods-enabled/socache_shmcb.load:/etc/apache2/mods-enabled/socache_shmcb.load
+        ## - ./local/apache2/mods-enabled/ssl.conf:/etc/apache2/mods-enabled/ssl.conf
+        ## - ./local/apache2/mods-enabled/ssl.load:/etc/apache2/mods-enabled/ssl.load
+        ## - ./local/apache2/certs:/etc/apache2/certs
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_HOME: "http://localhost:8080"
+      WORDPRESS_SITEURL: "http://localhost:8080"
     depends_on:
       - proxy
 

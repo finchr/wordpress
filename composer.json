@@ -1,5 +1,23 @@
 {
-    "require": {
-        "google/cloud-tools": "^0.14.0"
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "php-http/discovery": true
+    },
+    "vendor-dir": "html/vendor"
+  },
+  "extra": {
+    "installer-paths": {
+      "html/wp-content/plugins/{$name}/": [
+        "type:wordpress-plugin"
+      ]
     }
+  },
+  "require": {
+    "auth0/wordpress": "^5.0",
+    "composer/installers": "^2.3",
+    "google/cloud-tools": "^0.14.0",
+    "nyholm/psr7": "^1.8",
+    "symfony/http-client": "^7.1"
+  }
 }

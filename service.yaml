@@ -1,0 +1,71 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    run.googleapis.com/client-name: gcloud
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+    run.googleapis.com/launch-stage: BETA
+    run.googleapis.com/operation-id: ec55106f-13d5-4442-b4a4-33a7a013d086
+  labels:
+    cloud.googleapis.com/location: us-west1
+  name: wordpress
+  namespace: "175845837459"
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "100"
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/cloudsql-instances: wordpress-test-434320:us-west1:wordpress
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/startup-cpu-boost: "true"
+      labels:
+        client.knative.dev/nonce: gpmceedmuu
+        run.googleapis.com/startupProbeType: Default
+    spec:
+      containerConcurrency: 80
+      containers:
+        - env:
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: wordpress-db-password
+            - name: JOOMLA_DB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: wordpress-db-secret
+            - name: WORDPRESS_DB_HOST
+              value: /cloudsql/wordpress-twbc-org:us-west1:wordpress-db
+            - name: WORDPRESS_DB_USER
+              value: wordpress
+            - name: WORDPRESS_DB_NAME
+              value: wordpress
+            - name: PROJECT_ID
+              value: wordpress-test-434320
+          image: IMAGE_URL_PLACEHOLDER
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          startupProbe:
+            failureThreshold: 1
+            periodSeconds: 240
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 240
+          volumeMounts:
+            - mountPath: /var/www/html/cache
+              name: cache
+      serviceAccountName: wordpress-service@wordpress-test-434320.iam.gserviceaccount.com
+      timeoutSeconds: 300
+      volumes:
+        - emptyDir:
+            medium: Memory
+            sizeLimit: 10M
+          name: cache

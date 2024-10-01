@@ -32,11 +32,6 @@ spec:
                 secretKeyRef:
                   key: latest
                   name: wordpress-db-password
-            - name: JOOMLA_DB_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: latest
-                  name: wordpress-db-secret
             - name: WORDPRESS_DB_HOST
               value: /cloudsql/wordpress-twbc-org:us-west1:wordpress-db
             - name: WORDPRESS_DB_USER

@@ -40,28 +40,11 @@ if (!function_exists('getenv_docker')) {
 }
 
 // ** Database settings - You can get this info from your web host ** //
-/** The name of the database for WordPress */
 define( 'DB_NAME', getenv_docker('WORDPRESS_DB_NAME', 'wordpress') );
-
-/** Database username */
 define( 'DB_USER', getenv_docker('WORDPRESS_DB_USER', 'example username') );
-
-/** Database password */
 define( 'DB_PASSWORD', getenv_docker('WORDPRESS_DB_PASSWORD', 'example password') );
-
-/**
- * Docker image fallback values above are sourced from the official WordPress installation wizard:
- * https://github.com/WordPress/WordPress/blob/1356f6537220ffdc32b9dad2a6cdbe2d010b7a88/wp-admin/setup-config.php#L224-L238
- * (However, using "example username" and "example password" in your database is strongly discouraged.  Please use strong, random credentials!)
- */
-
-/** Database hostname */
 define( 'DB_HOST', getenv_docker('WORDPRESS_DB_HOST', 'mysql') );
-
-/** Database charset to use in creating database tables. */
 define( 'DB_CHARSET', getenv_docker('WORDPRESS_DB_CHARSET', 'utf8') );
-
-/** The database collate type. Don't change this if in doubt. */
 define( 'DB_COLLATE', getenv_docker('WORDPRESS_DB_COLLATE', '') );
 
 /**#@+
@@ -85,31 +68,20 @@ define( 'LOGGED_IN_SALT',   getenv_docker('WORDPRESS_LOGGED_IN_SALT',   '5134d6b
 define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       'fa32a543f12cc42df784e5e21f2a02dde0347cd2') );
 // (See also https://wordpress.stackexchange.com/a/152905/199287)
 
-/**#@-*/
-
-/**
- * WordPress database table prefix.
- *
- * You can have multiple installations in one database if you give each
- * a unique prefix. Only numbers, letters, and underscores please!
- */
 $table_prefix = getenv_docker('WORDPRESS_TABLE_PREFIX', 'wp_');
 
-/**
- * For developers: WordPress debugging mode.
- *
- * Change this to true to enable the display of notices during development.
- * It is strongly recommended that plugin and theme developers use WP_DEBUG
- * in their development environments.
- *
- * For information on other constants that can be used for debugging,
- * visit the documentation.
- *
- * @link https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
- */
 define( 'WP_DEBUG', !!getenv_docker('WORDPRESS_DEBUG', '') );
 
+define('WP_HOME', getenv('WORDPRESS_HOME') ?: 'http://127.0.0.1:8080');
+define('WP_SITEURL', getenv('WORDPRESS_SITEURL') ?: 'http://127.0.0.1:8080');
+define('FORCE_SSL_ADMIN', (getenv('WORDPRESS_FORCE_SSL_ADMIN') === 'true') ? true : false);
+define('FORCE_SSL_LOGIN', (getenv('WORDPRESS_FORCE_SSL_LOGIN') === 'true') ? true : false);
+define('COOKIE_DOMAIN', (getenv('WORDPRESS_COOKIE_DOMAIN') === 'true') ? true : false);
+
 /* Add any custom values between this line and the "stop editing" line. */
+
+/* Multisite */
+define( 'WP_ALLOW_MULTISITE', false );
 
 // If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact
 // see also https://wordpress.org/support/article/administration-over-ssl/#using-a-reverse-proxy
